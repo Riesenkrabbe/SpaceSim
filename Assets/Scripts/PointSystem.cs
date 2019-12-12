@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class PointSystem : MonoBehaviour
 {
-    public int points = 0;
-    public int combo = 0;
+    public float points = 0;
+    public float combo = 0;
     private float combotimer;
+    private Rigidbody rb;
     // Start is called before the first frame update
     void Start()
     {
-
+        rb = GetComponent<Rigidbody>();
         //Physics.IgnoreCollision(GameObject.Find("Player").GetComponent<Collider>(), GetComponent<Collider>());
         Debug.Log("PointSystem Startup");
     }
@@ -25,8 +26,16 @@ public class PointSystem : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        combo++;
-        combotimer = 0.0f;
+        if (rb.velocity.magnitude <= 15.0f)
+        {
+
+        }
+        else
+        {
+            combo += 1.0f * rb.velocity.magnitude/15.0f;
+            combotimer = 0.0f;
+        }
+        Debug.Log(rb.velocity.magnitude);
     }
     private void OnTriggerExit(Collider other)
     {
