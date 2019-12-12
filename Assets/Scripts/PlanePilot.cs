@@ -12,7 +12,6 @@ public class PlanePilot : MonoBehaviour
     public float rudder = 10.0f;
     public float alteron = 10.0f;
     public float elevator = 10.0f;
-    public AnimationCurve axis;
     private float counter;
     
     // Start is called before the first frame update
@@ -41,8 +40,11 @@ public class PlanePilot : MonoBehaviour
 
         //Glide
 
-        Vector3 glide = transform.forward * rb.velocity.magnitude * Mathf.Cos(Vector3.Angle(transform.forward, rb.velocity) * Mathf.Deg2Rad) * glideFactor - rb.velocity * glideFactor; //* 0.0174533f is degree to radians
+        Vector3 glide = transform.forward * rb.velocity.magnitude * Mathf.Cos(Vector3.Angle(transform.forward, rb.velocity) * 0.0174533f * 2) * glideFactor - rb.velocity * glideFactor; //* 0.0174533f is degree to radians
         
+        Debug.Log(glide.magnitude);
+        
+
         //Drag
         Vector3 drag = rb.velocity * (-1) * Mathf.Sin(angle * Mathf.Deg2Rad) * liftStatic;//If our plane is at 90 degrees into the slipstream the drag is highest
 
@@ -73,22 +75,11 @@ public class PlanePilot : MonoBehaviour
         rb.velocity = rails;
         */
         //Apply Forces
+        rb.AddForce(lift + drag + thrust + glide);//+ rails);
+
         
-        rb.AddForce(lift + drag + thrust +glide);// + glide);//+ rails);
-
-
-        //rb.drag = Mathf.Abs(Mathf.Sin(angle * 0.0174533f * 2));
-        //rb.AddForce(thrust);
-
         //Turn
-        float verticalAxis; float horizontalAxis; float yawAxis;
-        verticalAxis   = Input.GetAxis("Vertical");
-        horizontalAxis = Input.GetAxis("Horizontal");
-        yawAxis = Input.GetAxis("Yaw");
-        verticalAxis = axis.Evaluate(verticalAxis);
-        horizontalAxis = axis.Evaluate(horizontalAxis);
-        yawAxis = axis.Evaluate(yawAxis);
-        Vector3 rot = new Vector3(verticalAxis * elevator, yawAxis * rudder, -horizontalAxis * alteron);
+        Vector3 rot = new Vector3(Input.GetAxis("Vertical") * elevator, Input.GetAxis("Yaw") * rudder, -Input.GetAxis("Horizontal") * alteron);
         //* rb.velocity.magnitude / speed * Mathf.Cos(angle * Mathf.Deg2Rad); //Turn rate based on wethever we are looking into the slipstream or not   and its higher if we go fast
         
         //rot = rot +  rb.velocity.magnitude / speed; //Old System
